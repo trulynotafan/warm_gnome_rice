@@ -54,9 +54,9 @@ For fastfetch I used [fastcat](https://github.com/m3tozz/FastCat)
 
 ### Some tips:
 
-rice is fun if every website follows it, for that you can checkout the [stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) extension and you can install more gruvbox or any other theme more consistent.
-you can search and find various gruvbox themes for your website by clicking the extension icon on a specifc website.
-also flatpak packages sometime dont support gtk themes, so do try the aur/pacman or other variants depending upon your distro.
+rice is fun if every website follows it, for that you can checkout the [stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) extension and you can install more website themes to make rice more consistent.
+you can search and find various gruvbox themes for your website by clicking the extension icon on a specific website.
+Also flatpak packages sometime don't support gtk themes, so do try the aur/pacman or other variants depending upon your distro.
 
 That's about it :), if you like the rice, do star the repo :)
 Also if you need any help, you can dm me on reddit or open an issue here, I would love to help out :D Happy Ricing! 
