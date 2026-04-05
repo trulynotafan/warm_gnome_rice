@@ -4,6 +4,15 @@ Screenshots:
 <img width="1366" height="768" alt="Screenshot From 2026-04-04 23-55-20" src="https://github.com/user-attachments/assets/23d18f99-6d48-4245-9310-25f568779456" />
 <img width="1366" height="768" alt="Screenshot From 2026-04-04 23-55-28" src="https://github.com/user-attachments/assets/1c6cb0d4-d45f-4a61-8179-aceb76a2c4cb" />
 
+# Installlation:
+I have made a little shell script for automated installation, this currently works perfectly on arch/catchyOS and related distros, I'm not quite sure if it would work on other distors like mint/ubuntu etc, but even if it doesnt, I have added full details below to apply everything indvisually :)
+to run the scirpt, just clone this repo and do:
+``` 
+sh install.sh
+```
+
+## Manual Installation:
+
 ### GTK Theme: 
 
 [Gruvbox GTK Theme](https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme)
