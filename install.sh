@@ -15,6 +15,53 @@ NC='\033[0m'
 info() { echo -e "${GREEN}[rice]${NC} $*"; }
 warn() { echo -e "${YELLOW}[warn]${NC} $*"; }
 
+# ── Bibata cursor install helper ──────────────────────────────
+# Release assets are .tar.xz (NOT .tar.gz — that URL never existed).
+# Queries the GitHub API for the real URL, falls back to a hardcoded
+# versioned URL if the API is unavailable, then validates before extract.
+install_bibata_from_github() {
+    local dest_tmp
+    dest_tmp=$(mktemp -d)
+
+    info "Fetching Bibata cursor release info from GitHub API..."
+    local api_url="https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest"
+    local download_url
+    download_url=$(curl -sfL "$api_url" \
+        | grep '"browser_download_url"' \
+        | grep 'Bibata-Modern-Ice\.tar\.xz' \
+        | grep -v 'Right' \
+        | head -1 \
+        | sed 's/.*"browser_download_url": *"\([^"]*\)".*/\1/')
+
+    if [ -z "$download_url" ]; then
+        warn "Could not resolve Bibata download URL from GitHub API. Trying fallback URL..."
+        # Hardcoded to v2.0.6 — the latest release as of 2024-06-18
+        download_url="https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.6/Bibata-Modern-Ice.tar.xz"
+    fi
+
+    info "Downloading Bibata cursor from: $download_url"
+    local tarball="$dest_tmp/Bibata-Modern-Ice.tar.xz"
+    if ! curl -L --fail --retry 3 --retry-delay 2 -o "$tarball" "$download_url"; then
+        warn "Download failed. Install manually: https://github.com/ful1e5/Bibata_Cursor/releases/latest"
+        rm -rf "$dest_tmp"
+        return 1
+    fi
+
+    # Validate it's actually an xz-compressed tar before extracting
+    if ! file "$tarball" | grep -qiE 'XZ compressed|xz compressed'; then
+        warn "Downloaded file is not a valid .tar.xz archive (got: $(file "$tarball"))."
+        warn "Install manually: https://github.com/ful1e5/Bibata_Cursor/releases/latest"
+        rm -rf "$dest_tmp"
+        return 1
+    fi
+
+    info "Extracting Bibata cursor..."
+    tar -xf "$tarball" -C "$dest_tmp"
+    $SUDO mv "$dest_tmp/Bibata-Modern-Ice" /usr/share/icons/
+    rm -rf "$dest_tmp"
+    info "Bibata-Modern-Ice cursor installed to /usr/share/icons/."
+}
+
 # ── sudo shim (root inside Docker has no sudo) ────────────────
 if command -v sudo &>/dev/null; then
     SUDO="sudo"
@@ -70,12 +117,14 @@ case "$DISTRO" in
             sassc gtk2-engines-murrine gnome-themes-extra gnome-tweaks \
             gnome-shell-extensions fish git curl fonts-jetbrains-mono \
             python3-pip pipx
-        BIBATA_TMP=$(mktemp -d)
-        curl -sL "https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.gz" \
-            -o "$BIBATA_TMP/Bibata-Modern-Ice.tar.gz"
-        tar -xf "$BIBATA_TMP/Bibata-Modern-Ice.tar.gz" -C "$BIBATA_TMP"
-        $SUDO mv "$BIBATA_TMP/Bibata-Modern-Ice" /usr/share/icons/
-        rm -rf "$BIBATA_TMP"
+        # bibata-cursor-theme is in official Debian/Ubuntu repos (bookworm+/22.04+)
+        # Try apt first; fall back to GitHub .tar.xz download if unavailable
+        if $SUDO apt install -y bibata-cursor-theme 2>/dev/null; then
+            info "Bibata cursor installed via apt."
+        else
+            warn "bibata-cursor-theme not found in apt — falling back to GitHub download."
+            install_bibata_from_github || true
+        fi
         ;;
     fedora)
         $SUDO dnf install -y \
@@ -89,12 +138,7 @@ case "$DISTRO" in
         $SUDO zypper install -y \
             sassc gtk2-engine-murrine gnome-themes-extra gnome-tweaks \
             fish git curl jetbrains-mono python3-pipx
-        BIBATA_TMP=$(mktemp -d)
-        curl -sL "https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.gz" \
-            -o "$BIBATA_TMP/Bibata-Modern-Ice.tar.gz"
-        tar -xf "$BIBATA_TMP/Bibata-Modern-Ice.tar.gz" -C "$BIBATA_TMP"
-        $SUDO mv "$BIBATA_TMP/Bibata-Modern-Ice" /usr/share/icons/
-        rm -rf "$BIBATA_TMP"
+        install_bibata_from_github || true
         ;;
     *)
         warn "Skipping auto-install. Install manually: sassc, gtk-engine-murrine, gnome-themes-extra, gnome-tweaks, gnome-shell-extensions, fish, git, pipx"
@@ -318,7 +362,7 @@ rm -f /tmp/omf-install
 # ── Done ──────────────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}════════════════════════════════════════════${NC}"
-echo -e "${GREEN}  warm gnome rice setup complete!           ${NC}"
+echo -e "${GREEN}  warm gnome rice setup complete :D          ${NC}"
 echo -e "${GREEN}════════════════════════════════════════════${NC}"
 echo ""
 echo "  Remaining manual steps:"
@@ -336,4 +380,4 @@ echo "    • Space Bar           – workspaces in the top bar"
 echo "    • Top Bar Organizer   – reorder top bar items"
 echo "    • Top Hat             – CPU/RAM monitor in top bar"
 echo ""
-echo "  Happy ricing! :)"
+echo "  Please star the repo & happy ricing :) "
