@@ -8,7 +8,7 @@ Screenshots:
 I have made a little shell script for automated installation, for that just run this in the terminal:
 
 ```
-git clone https://github.com/trulynotafan/warm_gnome_rice && cd warm_gnome_rice
+git clone https://github.com/af44n/warm_gnome_rice && cd warm_gnome_rice
 chmod +x install.sh
 ./install.sh
 ```
