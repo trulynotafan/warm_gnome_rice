@@ -231,7 +231,7 @@ declare -A EXTENSIONS=(
     ["just-perfection-desktop@just-perfection"]="3843"
     ["logomenu@aryan_k"]="4451"
     ["space-bar@luchrioh"]="5090"
-    ["topbar-organizer@julian.gse.jsts.xyz"]="4356"
+    ["top-bar-organizer@julian.gse.jsts.xyz"]="4356"
     ["tophat@fflewddur.github.io"]="5219"
 )
 
